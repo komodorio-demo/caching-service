@@ -56,7 +56,7 @@ class Cache:
 
     def __init__(
         self,
-        maxsize: int = 256,
+        maxsize: int = 256*1024,
         ttl: T_TTL = 0,
         timer: t.Callable[[], T_TTL] = time.time,
         default: t.Any = None,
