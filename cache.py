@@ -21,6 +21,7 @@ F = t.TypeVar("F", bound=t.Callable[..., t.Any])
 T_DECORATOR = t.Callable[[F], F]
 T_TTL = t.Union[int, float]
 T_FILTER = t.Union[str, t.List[t.Hashable], t.Pattern, t.Callable]
+TTL_MIN_TIME = 180
 
 UNSET = object()
 
@@ -62,7 +63,7 @@ class Cache:
         default: t.Any = None,
     ):
         self.maxsize = maxsize
-        self.ttl = ttl
+        self.ttl = ttl + TTL_MIN_TIME
         self.timer = timer
         self.default = default
 
