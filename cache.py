@@ -364,30 +364,6 @@ class Cache:
                 count += self._delete(key)
         return count
 
-    def delete_expired(self) -> int:
-        """
-        Delete expired cache keys and return number of entries deleted.
-        Returns:
-            int: Number of entries deleted.
-        """
-        with self._lock:
-            return self._delete_expired()
-
-    def _delete_expired(self) -> int:
-        if not self._expire_times:
-            return 0
-
-        # Use a static expiration time for each key for better consistency as opposed to
-        # a newly computed timestamp on each iteration.
-        count = 0
-        expires_on = self.timer()
-        expire_times = self._expire_times.copy()
-
-        for key, expiration in expire_times.items():
-            if expiration <= expires_on:
-                count += self._delete(key)
-        return count
-
     def expired(self, key: t.Hashable, expires_on: t.Optional[T_TTL] = None) -> bool:
         """
         Return whether cache key is expired or not.
@@ -424,7 +400,7 @@ class Cache:
         Returns:
             Number of cache entries evicted.
         """
-        count = self.delete_expired()
+        count = 0
 
         if not self.full():
             return count
@@ -448,7 +424,6 @@ class Cache:
             Two-element tuple of deleted cache ``(key, value)``.
         """
         with self._lock:
-            self._delete_expired()
             return self._popitem()
 
     def _popitem(self):
